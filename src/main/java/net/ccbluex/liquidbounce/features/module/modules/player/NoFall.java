@@ -135,9 +135,10 @@ public class NoFall extends Module {
         final String mode = modeValue.get();
 
         if(packet instanceof C03PacketPlayer && mode.equalsIgnoreCase("SpoofGround")) {
-        if(mc.thePlayer.fallDistance >= 3)
-            mc.thePlayer.fallDistance = 0;
+        if(mc.thePlayer.fallDistance >= 3) {
             ((C03PacketPlayer) packet).onGround = true;
+            mc.thePlayer.fallDistance = 0;
+        }
         }
 
         if(packet instanceof C03PacketPlayer && mode.equalsIgnoreCase("NoGround"))
