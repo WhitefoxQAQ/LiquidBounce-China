@@ -17,7 +17,7 @@ import java.util.Random;
 @ModuleInfo(name = "AutoL", description = "Auto Type L To Killed Player.",
         category = ModuleCategory.FUN)
 public class AutoL extends Module {
-    private final ListValue modeValue = new ListValue("Mode", new String[]{"Normal", "CXK", "Maths", "GongFU"}, "Normal");
+    private final ListValue modeValue = new ListValue("Mode", new String[]{"Normal"}, "Normal");
     private final BoolValue advalue = new BoolValue("AD", true);
     String[] NormaL = {"我告诉你这样的情况你还需要明白了解的不是吗", "我这埋汰你呢都是没速度和我继续的比拟呢不是奥妙",
             "我好象你爸爸似的你难道自己不清楚这样情况埃", "你这样的蜗牛就是完全没什么速度反抗你爸爸我埃",
@@ -62,13 +62,16 @@ public class AutoL extends Module {
         if (packet instanceof S02PacketChat) {
             Random r = new Random();
             String text = NormaL[r.nextInt(57)];
-
-
             String ad = "";
             String ad2 = "";
             String message = ((S02PacketChat) packet).getChatComponent().getUnformattedText();
             if (message.contains("被" + mc.thePlayer.getGameProfile().getName() + "击杀。")) {
                 String username = message.replaceAll("被" + mc.thePlayer.getGameProfile().getName() + "击杀。", "");
+                mc.thePlayer.sendChatMessage("/ac [LiquidBounce]" + username + " L" + text + (advalue.get() ? ad + ad2 : ""));
+                mc.thePlayer.sendChatMessage("/wdr " + username + " ka speed reach fly velocity ac");
+            }
+            if (message.contains(" 被击杀，击杀者： " + mc.thePlayer.getGameProfile().getName() + "。")) {
+                String username = message.replaceAll(" 被击杀，击杀者： " + mc.thePlayer.getGameProfile().getName() + "。", "");
                 mc.thePlayer.sendChatMessage("/ac [LiquidBounce]" + username + " L" + text + (advalue.get() ? ad + ad2 : ""));
                 mc.thePlayer.sendChatMessage("/wdr " + username + " ka speed reach fly velocity ac");
             }
