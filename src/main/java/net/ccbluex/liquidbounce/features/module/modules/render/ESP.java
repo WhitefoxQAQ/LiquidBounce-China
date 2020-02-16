@@ -289,7 +289,7 @@ public class ESP extends Module {
             GlStateManager.popMatrix();
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glDisable(GL11.GL_TEXTURE_2D);
-            int color = parseEspColorFromNameTag(ent);
+            int color = Color.white.getRGB();
 
             double xDiff = (endx - x) / 4.0;
             double x2Diff = (endx - x) / 3;

@@ -25,11 +25,11 @@ import net.minecraft.network.play.client.C03PacketPlayer.C04PacketPlayerPosition
 @ModuleInfo(name = "Criticals", description = "Automatically deals critical hits.", category = ModuleCategory.COMBAT)
 class Criticals : Module() {
     val modeValue = ListValue("Mode", arrayOf("Packet", "HypixelPacket", "NoGround", "Hop", "TPHop", "Jump", "LowJump"), "packet")
-    val delayValue = IntegerValue("Delay", 0, 0, 500)
-    private val hurtTimeValue = IntegerValue("HurtTime", 10, 0, 20)
+    val delayValue = IntegerValue("Delay", 0, 0, 1000)
+    private val hurtTimeValue = IntegerValue("HurtTime", 10, 0, 10)
 
     val msTimer = MSTimer()
-
+    var nogroundstate = false
     override fun onEnable() {
         if (modeValue.get().equals("NoGround", ignoreCase = true))
             mc.thePlayer.jump()
@@ -39,13 +39,9 @@ class Criticals : Module() {
     fun onAttack(event: AttackEvent) {
         if (event.targetEntity is EntityLivingBase) {
             val entity = event.targetEntity
-
             if (!mc.thePlayer.onGround || mc.thePlayer.isOnLadder || mc.thePlayer.isInWeb || mc.thePlayer.isInWater ||
-                    mc.thePlayer.isInLava || mc.thePlayer.ridingEntity != null || entity.hurtResistantTime <= hurtTimeValue.get() &&(msTimer.delay(200f) || entity.hurtResistantTime > 0) && mc.thePlayer.isCollidedVertically ||
-                    LiquidBounce.moduleManager[Fly::class.java]!!.state ||LiquidBounce.moduleManager[Speed::class.java]!!.state ||
-                    LiquidBounce.moduleManager[LongJump::class.java]!!.state ||
-                    !msTimer.hasTimePassed(delayValue.get().toLong())
-                    )
+                    mc.thePlayer.isInLava || mc.thePlayer.ridingEntity != null || entity.hurtTime > hurtTimeValue.get() ||
+                    LiquidBounce.moduleManager[Fly::class.java]!!.state || !msTimer.hasTimePassed(delayValue.get().toLong()))
                 return
 
             val x = mc.thePlayer.posX
@@ -62,9 +58,10 @@ class Criticals : Module() {
                 }
 
                 "hypixelpacket" -> {
-                    mc.thePlayer.sendQueue.addToSendQueue(C04PacketPlayerPosition(x, y + 0.0626, z, false))
+                    mc.thePlayer.sendQueue.addToSendQueue(C04PacketPlayerPosition(x, y + 0.0226, z, false))
                     mc.thePlayer.sendQueue.addToSendQueue(C04PacketPlayerPosition(x, y, z, false))
                     mc.thePlayer.onCriticalHit(entity)
+                    println("crit")
                 }
 
                 "hop" -> {
@@ -90,8 +87,9 @@ class Criticals : Module() {
     fun onPacket(event: PacketEvent) {
         val packet = event.packet
 
-        if (packet is C03PacketPlayer && modeValue.get().equals("NoGround", ignoreCase = true))
+        if (packet is C03PacketPlayer && modeValue.get().equals("NoGround", ignoreCase = true) && nogroundstate) {
             packet.onGround = false
+        }
     }
 
     override val tag: String?

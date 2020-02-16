@@ -77,9 +77,9 @@ public class ModCheck extends Module {
         if (onlinemod.isEmpty()) {
             Long += 10;
         }
-        RenderUtils.drawRoundedRect(5, 150, 120, 161, new Color(0, 125, 255, 255).getRGB(),
+        RenderUtils.drawRoundedRect(5, 100, 120, 111, new Color(0, 125, 255, 255).getRGB(),
                 new Color(0, 125, 255, 255).getRGB());
-        RenderUtils.drawRoundedRect(5, 160, 120, 160 + Long, new Color(255, 255, 255, 155).getRGB(),
+        RenderUtils.drawRoundedRect(5, 110, 120, 110 + Long, new Color(255, 255, 255, 155).getRGB(),
                 new Color(255, 255, 255, 155).getRGB());
         Long = 0;
         if (showOnline.get())
@@ -87,7 +87,7 @@ public class ModCheck extends Module {
                 // 如果客服不重复在线
                 if (onlinemod.contains(mods)) {
                     // 客服在线 Rect自动加长
-                    FontManager.yahei18.drawString(mods, 15, 160 + Long, Color.GREEN.getRGB());
+                    FontManager.yahei18.drawStringWithShadow(mods, 15, 110 + Long, Color.GREEN.getRGB());
                     Long += 10;
                     Mod++;// Mod数值增加
                 }
@@ -97,7 +97,7 @@ public class ModCheck extends Module {
                 // 如果客服不重复在线
                 if (offlinemod.contains(mods)) {
                     // 客服在线 Rect自动加长
-                    FontManager.yahei18.drawString(mods, 15, 160 + Long, Color.RED.getRGB());
+                    FontManager.yahei18.drawStringWithShadow(mods, 15, 110 + Long, Color.RED.getRGB());
                     Long += 10;
                     Mod++;// Mod数值增加
                 }
@@ -106,9 +106,9 @@ public class ModCheck extends Module {
         // 0).getRGB(),
         // new Color(255, 255, 255, 155).getRGB());
         if (Mod < 1) {
-            FontManager.yahei18.drawCenteredStringWithShadow("当前没有客服在线", 57.5f, 160, new Color(75, 75, 75).getRGB());
+            FontManager.yahei18.drawCenteredStringWithShadow("当前没有客服在线", 57.5f, 110, new Color(75, 75, 75).getRGB());
         }
-        FontManager.yahei18.drawCenteredStringWithShadow("客服在线列表 (" + Mod + "/"+listArray.size()+")", 57.5f, 150,
+        FontManager.yahei18.drawCenteredStringWithShadow("客服在线列表 (" + Mod + "/"+listArray.size()+")", 57.5f, 100,
                 new Color(255, 255, 255).getRGB());
 
     }
@@ -135,10 +135,7 @@ public class ModCheck extends Module {
                 }
             }
 
-            if (e.toLowerCase().contains("你不能邀请这位玩家入队")
-                    || e.toLowerCase().contains("[MOD] " + this.modname)
-                    || e.toLowerCase().contains("[HELPER] " + this.modname)
-                    || e.toLowerCase().contains("[ADMIN] " + this.modname)) {
+            if (e.toLowerCase().contains("你不能邀请这位玩家入队")) {
                 mc.thePlayer.sendChatMessage("/chat a");
                 event.cancelEvent();
                 if (this.offlinemod.contains(this.modname)) {

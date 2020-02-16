@@ -29,7 +29,7 @@ import net.minecraft.util.MathHelper;
 @ModuleInfo(name = "Step", description = "Allows you to step up blocks.", category = ModuleCategory.MOVEMENT)
 public class Step extends Module {
 
-    private final ListValue modeValue = new ListValue("Mode", new String[] {"Vanilla", "Jump", "NCP", "AAC", "LAAC", "AAC3.3.4", "OldNCP", "Spartan", "Rewinside"}, "NCP");
+    private final ListValue modeValue = new ListValue("Mode", new String[] {"Vanilla", "Jump", "NCP", "AAC", "LAAC", "AAC3.3.4", "OldNCP", "Spartan", "Rewinside","Hypixel"}, "NCP");
     private final FloatValue heightValue = new FloatValue("Height", 1F, 0.6F, 10F);
     private final IntegerValue delayValue = new IntegerValue("Delay", 0, 0, 500);
 

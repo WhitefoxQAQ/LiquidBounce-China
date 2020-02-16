@@ -34,7 +34,6 @@ class NameTags : Module() {
     private val armorValue = BoolValue("Armor", true)
     private val clearNamesValue = BoolValue("ClearNames", false)
     private val fontValue = FontValue("Font", Fonts.font40)
-    private val borderValue = BoolValue("Border", true)
     private val scaleValue = FloatValue("Scale", 1F, 1F, 4F)
 
     @EventTarget
@@ -105,16 +104,11 @@ class NameTags : Module() {
         // Draw nametag
         val width = 70
 
+        drawRect(-width - 2F, -47F, width + 4F, fontRenderer.FONT_HEIGHT + -23F,
+                Color(0,0,0,70).rgb)
+        drawRect(-72F, -15F, heal, fontRenderer.FONT_HEIGHT + -23F,
+                Color.green.rgb)
 
-        if (borderValue.get())
-            drawBorderedRect(-width - 2F, -2F, width + 4F, fontRenderer.FONT_HEIGHT + 2F, 2F,
-                    Color(255, 255, 255, 90).rgb, Integer.MIN_VALUE)
-        else {
-            drawRect(-width - 2F, -47F, width + 4F, fontRenderer.FONT_HEIGHT + -23F,
-                    Integer.MIN_VALUE)
-            drawRect(-72F, -15F, heal, fontRenderer.FONT_HEIGHT + -23F,
-                    Color.green.rgb)
-        }
         fontRenderer.drawString(text, 1F + -width, if (fontRenderer == Fonts.minecraftFont) -40F else -39.5F,
                 0xFFFFFF, true)
         fontRenderer.drawString("$healthText $pingText", 0F - width, if (fontRenderer == Fonts.minecraftFont) -28F else -27.5F,
@@ -126,7 +120,7 @@ class NameTags : Module() {
                     continue
 
                 mc.renderItem.zLevel = -147F
-                mc.renderItem.renderItemAndEffectIntoGUI(entity.getEquipmentInSlot(index), -50 + index * 20, -60)
+                mc.renderItem.renderItemAndEffectIntoGUI(entity.getEquipmentInSlot(index), -50 + index * 20, -70)
             }
 
             enableAlpha()
