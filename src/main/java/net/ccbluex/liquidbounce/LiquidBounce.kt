@@ -55,7 +55,6 @@ object LiquidBounce {
     lateinit var eventManager: EventManager
     lateinit var fileManager: FileManager
     lateinit var scriptManager: ScriptManager
-
     // HUD & ClickGUI
     lateinit var hud: HUD
 

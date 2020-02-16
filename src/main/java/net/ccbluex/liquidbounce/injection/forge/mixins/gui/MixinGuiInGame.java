@@ -60,7 +60,7 @@ public abstract class MixinGuiInGame {
             GuiIngame.drawRect(0, sr.getScaledHeight() - 24, width, sr.getScaledHeight(), new Color(0, 0, 0,80).getRGB());
             GuiIngame.drawRect(0, sr.getScaledHeight() - 24, 3, sr.getScaledHeight(), new Color(0, 255, 217, 255).getRGB());
             GuiIngame.drawRect(width/2 - 91 - 1 + entityPlayer.inventory.currentItem * 20 + 1, sr.getScaledHeight() - 24, width/2 - 91 - 1 + entityPlayer.inventory.currentItem * 20 + 22, sr.getScaledHeight() - 22 - 1 + 24, Integer.MAX_VALUE);
-            FontManager.yahei20.drawStringWithShadow("X:"+df.format(Minecraft.getMinecraft().thePlayer.posX)+" Y:"+df.format(Minecraft.getMinecraft().thePlayer.posY)+" Z:"+df.format(Minecraft.getMinecraft().thePlayer.posX),5,sr.getScaledHeight() - 24,new Color(255,255,255).getRGB());
+            FontManager.yahei20.drawStringWithShadow("X:"+df.format(Minecraft.getMinecraft().thePlayer.posX)+" Y:"+df.format(Minecraft.getMinecraft().thePlayer.posY)+" Z:"+df.format(Minecraft.getMinecraft().thePlayer.posZ),5,sr.getScaledHeight() - 24,new Color(255,255,255).getRGB());
             FontManager.yahei20.drawStringWithShadow(""+str,5,sr.getScaledHeight() - 12,Color.white.getRGB());
             GlStateManager.enableRescaleNormal();
             GlStateManager.enableBlend();
