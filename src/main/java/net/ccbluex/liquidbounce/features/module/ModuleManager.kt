@@ -183,8 +183,8 @@ class ModuleManager : Listenable {
                 ModCheck::class.java,
                 AntiFall::class.java,
                 TargetHUD::class.java,
-                AutoL::class.java
-                //PacketMotior::class.java
+                AutoL::class.java,
+                PacketMotior::class.java
         )
 
         registerModule(NoScoreboard)

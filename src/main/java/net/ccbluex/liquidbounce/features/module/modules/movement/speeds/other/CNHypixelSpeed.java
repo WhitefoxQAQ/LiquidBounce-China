@@ -94,6 +94,12 @@ public class CNHypixelSpeed extends SpeedMode {
     }
 
     @Override
+    public void onDisable() {
+        mc.timer.timerSpeed = 1;
+        super.onDisable();
+    }
+
+    @Override
     public void onMotion() {
 
     }
@@ -121,7 +127,7 @@ public class CNHypixelSpeed extends SpeedMode {
             collided = mc.thePlayer.isCollidedHorizontally;
             if (stage >= 0 || collided) {
                 stage = 0;
-                double a = LiquidBounce.moduleManager.getModule(Scaffold.class).getState() ? 0.407 : 0.41999745;
+                double a = LiquidBounce.moduleManager.getModule(Scaffold.class).getState() ? 0.407 : 0.41999742;
                 double motY = a + getJumpEffect() * 0.1;
                 if (stair == 0) {
                     mc.thePlayer.jump();
@@ -140,8 +146,8 @@ public class CNHypixelSpeed extends SpeedMode {
                     less = 1.12;
             }
         }
-        speed = getHypixelSpeed(stage) + 0.01 + Math.random() / 500;
-        speed *= 0.85;
+        speed = getHypixelSpeed(stage) + 0.01 + Math.random() / 510;
+        speed *= 0.865;
         if (stair > 0) {
             speed *= 0.7 - getSpeedEffect() * 0.11;
         }
@@ -211,9 +217,9 @@ public class CNHypixelSpeed extends SpeedMode {
         } else {
             if (forward != 0.0D) {
                 if (strafe > 0.0D) {
-                    yaw += (forward > 0.0D ? -42 : 42);
+                    yaw += (forward > 0.0D ? -41 : 41);
                 } else if (strafe < 0.0D) {
-                    yaw += (forward > 0.0D ? 42 : -42);
+                    yaw += (forward > 0.0D ? 41 : -41);
                 }
                 strafe = 0.0D;
                 if (forward > 0.0D) {

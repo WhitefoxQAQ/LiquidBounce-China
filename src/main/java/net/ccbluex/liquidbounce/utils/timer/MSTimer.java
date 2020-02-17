@@ -8,7 +8,10 @@ package net.ccbluex.liquidbounce.utils.timer;
 public final class MSTimer {
 
     private long time = -1L;
-
+    private long prevMS;
+    public MSTimer(){
+        this.prevMS = getTime();
+    }
     public boolean hasTimePassed(final long MS) {
         return System.currentTimeMillis() >= time + MS;
     }
@@ -18,13 +21,14 @@ public final class MSTimer {
     }
 
     public void reset() {
+        prevMS = getTime();
         time = System.currentTimeMillis();
     }
 
 
 
 
-    private long prevMS;
+
 
     public boolean delay(float milliSec) {
         return (float) (getTime() - this.prevMS) >= milliSec;

@@ -64,8 +64,10 @@ class Criticals : Module() {
                 "hypixelpacket" -> {
                     if( entity.hurtResistantTime <= hurtTimeValue.get() && lastStep.delay(20f)  && (timer.delay(200f) || entity.hurtResistantTime > 0) && mc.thePlayer.isCollidedVertically) {
                         if(groundTicks > 1) {
-                            mc.thePlayer.sendQueue.addToSendQueue(C04PacketPlayerPosition(x, y + 0.052 * RandomUtils.nextFloat(1.07f, 1.08f), z, false))
-                            mc.thePlayer.sendQueue.addToSendQueue(C04PacketPlayerPosition(x, y + 0.0125 * RandomUtils.nextFloat(1.07f, 1.08f), z, false))
+                            mc.netHandler.addToSendQueue(C04PacketPlayerPosition(x, y + 0.052 * RandomUtils.nextFloat(1.07f, 1.08f), z, false))
+                            mc.netHandler.addToSendQueue(C04PacketPlayerPosition(x, y, z, false))
+                            mc.netHandler.addToSendQueue(C04PacketPlayerPosition(x, y + 0.0125 * RandomUtils.nextFloat(1.01f, 1.08f), z, false))
+                            mc.netHandler.addToSendQueue(C04PacketPlayerPosition(x, y, z, false))
                             ClientUtils.displayChatMessage("[Debug]:do Critical")
                             mc.thePlayer.onCriticalHit(entity)
                         }
