@@ -23,50 +23,57 @@ import net.minecraft.util.AxisAlignedBB;
 public class NoFall extends Module {
 
     public final ListValue modeValue = new ListValue("Mode", new String[]{"SpoofGround", "NoGround", "Packet", "AAC", "LAAC", "AAC3.3.11", "AAC3.3.15", "Spartan", "CubeCraft", "Hypixel"}, "SpoofGround");
-
+    private final TickTimer spartanTimer = new TickTimer();
+    double fall;
     private int state;
     private boolean jumped;
-    private final TickTimer spartanTimer = new TickTimer();
-
     private int hypixel;
+
+    public static boolean isOnGround(double height) {
+        if (!mc.theWorld.getCollidingBoundingBoxes(mc.thePlayer, mc.thePlayer.getEntityBoundingBox().offset(0.0D, -height, 0.0D)).isEmpty()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     @EventTarget(ignoreCondition = true)
     public void onUpdate(UpdateEvent event) {
-        if(mc.thePlayer.onGround)
+        if (mc.thePlayer.onGround)
             jumped = false;
 
-        if(mc.thePlayer.motionY > 0)
+        if (mc.thePlayer.motionY > 0)
             jumped = true;
 
         if (!getState() || LiquidBounce.moduleManager.getModule(FreeCam.class).getState())
             return;
 
-        if(BlockUtils.collideBlock(mc.thePlayer.getEntityBoundingBox(), block -> block instanceof BlockLiquid) ||
+        if (BlockUtils.collideBlock(mc.thePlayer.getEntityBoundingBox(), block -> block instanceof BlockLiquid) ||
                 BlockUtils.collideBlock(new AxisAlignedBB(mc.thePlayer.getEntityBoundingBox().maxX, mc.thePlayer.getEntityBoundingBox().maxY, mc.thePlayer.getEntityBoundingBox().maxZ, mc.thePlayer.getEntityBoundingBox().minX, mc.thePlayer.getEntityBoundingBox().minY - 0.01D, mc.thePlayer.getEntityBoundingBox().minZ), block -> block instanceof BlockLiquid))
             return;
 
-        switch(modeValue.get().toLowerCase()) {
+        switch (modeValue.get().toLowerCase()) {
             case "packet":
-                if(mc.thePlayer.fallDistance > 2F)
+                if (mc.thePlayer.fallDistance > 2F)
                     mc.getNetHandler().addToSendQueue(new C03PacketPlayer(true));
                 break;
             case "cubecraft":
-                if(mc.thePlayer.fallDistance > 2F) {
+                if (mc.thePlayer.fallDistance > 2F) {
                     mc.thePlayer.onGround = false;
                     mc.thePlayer.sendQueue.addToSendQueue(new C03PacketPlayer(true));
                 }
                 break;
             case "aac":
-                if(mc.thePlayer.fallDistance > 2F) {
+                if (mc.thePlayer.fallDistance > 2F) {
                     mc.getNetHandler().addToSendQueue(new C03PacketPlayer(true));
                     state = 2;
-                }else if(state == 2 && mc.thePlayer.fallDistance < 2) {
+                } else if (state == 2 && mc.thePlayer.fallDistance < 2) {
                     mc.thePlayer.motionY = 0.1D;
                     state = 3;
                     return;
                 }
 
-                switch(state) {
+                switch (state) {
                     case 3:
                         mc.thePlayer.motionY = 0.1D;
                         state = 4;
@@ -82,12 +89,12 @@ public class NoFall extends Module {
                 }
                 break;
             case "laac":
-                if(!jumped && mc.thePlayer.onGround && !mc.thePlayer.isOnLadder() && !mc.thePlayer.isInWater()
+                if (!jumped && mc.thePlayer.onGround && !mc.thePlayer.isOnLadder() && !mc.thePlayer.isInWater()
                         && !mc.thePlayer.isInWeb)
                     mc.thePlayer.motionY = -6;
                 break;
             case "aac3.3.11":
-                if(mc.thePlayer.fallDistance > 2) {
+                if (mc.thePlayer.fallDistance > 2) {
                     mc.thePlayer.motionX = mc.thePlayer.motionZ = 0;
                     mc.getNetHandler().addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX,
                             mc.thePlayer.posY - 10E-4D, mc.thePlayer.posZ, mc.thePlayer.onGround));
@@ -95,8 +102,8 @@ public class NoFall extends Module {
                 }
                 break;
             case "aac3.3.15":
-                if(mc.thePlayer.fallDistance > 2) {
-                    if(!mc.isIntegratedServerRunning())
+                if (mc.thePlayer.fallDistance > 2) {
+                    if (!mc.isIntegratedServerRunning())
                         mc.getNetHandler().addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX,
                                 Double.NaN, mc.thePlayer.posZ, false));
                     mc.thePlayer.fallDistance = -9999;
@@ -105,7 +112,7 @@ public class NoFall extends Module {
             case "spartan":
                 spartanTimer.update();
 
-                if(mc.thePlayer.fallDistance > 1.5 && spartanTimer.hasTimePassed(10)) {
+                if (mc.thePlayer.fallDistance > 1.5 && spartanTimer.hasTimePassed(10)) {
                     mc.getNetHandler().addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX,
                             mc.thePlayer.posY + 10, mc.thePlayer.posZ, true));
                     mc.getNetHandler().addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX,
@@ -134,20 +141,26 @@ public class NoFall extends Module {
         final Packet<?> packet = event.getPacket();
         final String mode = modeValue.get();
 
-        if(packet instanceof C03PacketPlayer && mode.equalsIgnoreCase("SpoofGround")) {
-        if(mc.thePlayer.fallDistance >= 3 && isBlockUnder()) {
-            ((C03PacketPlayer) packet).onGround = true;
-            mc.thePlayer.fallDistance = 0;
-        }
+        if (packet instanceof C03PacketPlayer && mode.equalsIgnoreCase("SpoofGround")) {
+            if (!isOnGround(0.001)) {
+                if (mc.thePlayer.motionY < -0.08)
+                    fall -= mc.thePlayer.motionY;
+                if (fall > 2) {
+                    fall = 0;
+
+                    ((C03PacketPlayer) packet).onGround = true;
+                }
+            } else
+                fall = 0;
         }
 
-        if(packet instanceof C03PacketPlayer && mode.equalsIgnoreCase("NoGround"))
+        if (packet instanceof C03PacketPlayer && mode.equalsIgnoreCase("NoGround"))
             ((C03PacketPlayer) packet).onGround = false;
     }
 
     @EventTarget
     public void onMove(MoveEvent event) {
-        if(BlockUtils.collideBlock(mc.thePlayer.getEntityBoundingBox(), block -> block instanceof BlockLiquid) || BlockUtils.collideBlock(new AxisAlignedBB(mc.thePlayer.getEntityBoundingBox().maxX, mc.thePlayer.getEntityBoundingBox().maxY, mc.thePlayer.getEntityBoundingBox().maxZ, mc.thePlayer.getEntityBoundingBox().minX, mc.thePlayer.getEntityBoundingBox().minY - 0.01D, mc.thePlayer.getEntityBoundingBox().minZ), block -> block instanceof BlockLiquid))
+        if (BlockUtils.collideBlock(mc.thePlayer.getEntityBoundingBox(), block -> block instanceof BlockLiquid) || BlockUtils.collideBlock(new AxisAlignedBB(mc.thePlayer.getEntityBoundingBox().maxX, mc.thePlayer.getEntityBoundingBox().maxY, mc.thePlayer.getEntityBoundingBox().maxZ, mc.thePlayer.getEntityBoundingBox().minX, mc.thePlayer.getEntityBoundingBox().minY - 0.01D, mc.thePlayer.getEntityBoundingBox().minZ), block -> block instanceof BlockLiquid))
             return;
 
         if (modeValue.get().equalsIgnoreCase("laac")) {
@@ -167,12 +180,19 @@ public class NoFall extends Module {
     public String getTag() {
         return modeValue.get();
     }
+
+    @Override
+    public void onEnable() {
+        fall = 0;
+        super.onEnable();
+    }
+
     private boolean isBlockUnder() {
-        if(mc.thePlayer.posY < 0)
+        if (mc.thePlayer.posY < 0)
             return false;
-        for(int off = 0; off < (int)mc.thePlayer.posY+2; off += 2){
+        for (int off = 0; off < (int) mc.thePlayer.posY + 2; off += 2) {
             AxisAlignedBB bb = mc.thePlayer.getEntityBoundingBox().offset(0, -off, 0);
-            if(!mc.theWorld.getCollidingBoundingBoxes(mc.thePlayer, bb).isEmpty()){
+            if (!mc.theWorld.getCollidingBoundingBoxes(mc.thePlayer, bb).isEmpty()) {
                 return true;
             }
         }
