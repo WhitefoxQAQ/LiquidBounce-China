@@ -66,6 +66,7 @@ public class AntiBot extends Module {
     MSTimer lastRemoved = new MSTimer();
     private MSTimer timer = new MSTimer();
 
+
     public static boolean isBot(final EntityLivingBase entity) {
         if (!(entity instanceof EntityPlayer))
             return false;

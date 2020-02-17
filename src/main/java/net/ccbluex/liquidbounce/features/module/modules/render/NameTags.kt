@@ -64,7 +64,7 @@ class NameTags : Module() {
         val fontRenderer = fontValue.get()
 
         // Modify tag
-        val bot = AntiBot.isBot(entity)
+        val bot = AntiBot.isBot(entity) || AntiBot.getInvalid().contains(entity)
         val nameColor = if (bot) "§3" else if (entity.isInvisible) "§6" else if (entity.isSneaking) "§4" else "§7"
         val ping = if (entity is EntityPlayer) EntityUtils.getPing(entity) else 0
 

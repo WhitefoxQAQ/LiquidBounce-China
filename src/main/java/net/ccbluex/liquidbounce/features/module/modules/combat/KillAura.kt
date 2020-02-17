@@ -17,7 +17,6 @@ import net.ccbluex.liquidbounce.features.module.modules.render.FreeCam
 import net.ccbluex.liquidbounce.ui.client.hud.element.elements.Notification
 import net.ccbluex.liquidbounce.utils.EntityUtils
 import net.ccbluex.liquidbounce.utils.RaycastUtils
-import net.ccbluex.liquidbounce.utils.Rotation
 import net.ccbluex.liquidbounce.utils.RotationUtils
 import net.ccbluex.liquidbounce.utils.extensions.getDistanceToEntityBox
 import net.ccbluex.liquidbounce.utils.misc.RandomUtils
@@ -491,7 +490,8 @@ class KillAura : Module() {
             if (EntityUtils.targetPlayer && entity is EntityPlayer) {
                 if (entity.isSpectator || AntiBot.isBot(entity))
                     return false
-
+                if (AntiBot.getInvalid().contains(entity) || entity.isPlayerSleeping())
+                    return false
                 if (EntityUtils.isFriend(entity) && !LiquidBounce.moduleManager[NoFriends::class.java]!!.state)
                     return false
 
