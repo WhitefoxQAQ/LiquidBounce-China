@@ -15,8 +15,8 @@ import org.jetbrains.annotations.Nullable;
 
 @ModuleInfo(name = "PacketMonitor", description = "Check C03Packet.", category = ModuleCategory.MISC)
 public class PacketMotior extends Module {
-    private int packetcounter;
-    private MSTimer timer = new MSTimer();
+    public static int packetcounter;
+    public static MSTimer timer = new MSTimer();
 
     @EventTarget
     public void onPacket(PacketEvent e){
@@ -29,16 +29,12 @@ public class PacketMotior extends Module {
     public void onUpdate(UpdateEvent e){
         if (timer.delay(1000L) && !LiquidBounce.moduleManager.getModule(Fly.class).getState()) {
             if (packetcounter > 22) {
-                Logger.printinfo("\247c警告！Packet发送数量不正常!");
+                Logger.printinfo("\247c警告！Packet发送数量不正常! Packets:"+packetcounter);
             }
+
             packetcounter = 0;
             timer.reset();
         }
     }
 
-    @Nullable
-    @Override
-    public String getTag() {
-        return packetcounter+"";
-    }
 }

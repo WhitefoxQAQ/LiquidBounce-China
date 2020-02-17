@@ -9,6 +9,7 @@ import net.ccbluex.liquidbounce.event.*;
 import net.ccbluex.liquidbounce.features.module.Module;
 import net.ccbluex.liquidbounce.features.module.ModuleCategory;
 import net.ccbluex.liquidbounce.features.module.ModuleInfo;
+import net.ccbluex.liquidbounce.features.module.modules.misc.PacketMotior;
 import net.ccbluex.liquidbounce.utils.ClientUtils;
 import net.ccbluex.liquidbounce.utils.MovementUtils;
 import net.ccbluex.liquidbounce.utils.render.RenderUtils;
@@ -263,6 +264,8 @@ public class Fly extends Module {
 
         mc.timer.timerSpeed = 1F;
         mc.thePlayer.speedInAir = 0.02F;
+        PacketMotior.packetcounter = 0;
+        PacketMotior.timer.reset();
     }
 
     @EventTarget

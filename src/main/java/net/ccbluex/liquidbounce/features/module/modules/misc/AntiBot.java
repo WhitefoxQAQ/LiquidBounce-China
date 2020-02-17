@@ -15,6 +15,7 @@ import net.ccbluex.liquidbounce.features.module.ModuleInfo;
 import net.ccbluex.liquidbounce.ui.client.hud.element.elements.Notification;
 import net.ccbluex.liquidbounce.utils.ClientUtils;
 import net.ccbluex.liquidbounce.utils.EntityUtils;
+import net.ccbluex.liquidbounce.utils.Logger;
 import net.ccbluex.liquidbounce.utils.render.ColorUtils;
 import net.ccbluex.liquidbounce.utils.timer.MSTimer;
 import net.ccbluex.liquidbounce.value.BoolValue;
@@ -266,9 +267,9 @@ public class AntiBot extends Module {
             if (!removed.isEmpty()) {
                 if (lastRemoved.delay(1000)) {
                     if (removed.size() == 1) {
-                        ClientUtils.displayChatMessage(removed.size() + " bot has been removed");
+                        Logger.printinfo("\247a"+removed.size() + " bot has been removed");
                     } else {
-                        ClientUtils.displayChatMessage(removed.size() + " bots has been removed");
+                        Logger.printinfo("\247a"+removed.size() + " bots has been removed");
                     }
                     lastRemoved.reset();
                     removed.clear();
