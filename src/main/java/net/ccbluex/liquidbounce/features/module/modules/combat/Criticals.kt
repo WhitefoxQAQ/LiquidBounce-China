@@ -9,12 +9,12 @@ import net.ccbluex.liquidbounce.LiquidBounce
 import net.ccbluex.liquidbounce.event.AttackEvent
 import net.ccbluex.liquidbounce.event.EventTarget
 import net.ccbluex.liquidbounce.event.PacketEvent
+import net.ccbluex.liquidbounce.event.UpdateEvent
 import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
 import net.ccbluex.liquidbounce.features.module.modules.movement.Fly
 import net.ccbluex.liquidbounce.utils.ClientUtils
-import net.ccbluex.liquidbounce.utils.Logger
 import net.ccbluex.liquidbounce.utils.timer.MSTimer
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
@@ -22,10 +22,12 @@ import net.minecraft.entity.EntityLivingBase
 import net.minecraft.network.play.client.C03PacketPlayer
 import net.minecraft.network.play.client.C03PacketPlayer.C04PacketPlayerPosition
 import org.apache.commons.lang3.RandomUtils
-import kotlin.random.Random
 
 @ModuleInfo(name = "Criticals", description = "Automatically deals critical hits.", category = ModuleCategory.COMBAT)
 class Criticals : Module() {
+    var timer = MSTimer()
+    var lastStep = MSTimer()
+    var groundTicks = 0
     val modeValue = ListValue("Mode", arrayOf("Packet", "HypixelPacket", "NoGround", "Hop", "TPHop", "Jump", "LowJump"), "packet")
     val delayValue = IntegerValue("Delay", 0, 0, 1000)
     private val hurtTimeValue = IntegerValue("HurtTime", 10, 0, 20)
@@ -60,10 +62,14 @@ class Criticals : Module() {
                 }
 
                 "hypixelpacket" -> {
-                    mc.thePlayer.sendQueue.addToSendQueue(C04PacketPlayerPosition(x, y + 0.052 * RandomUtils.nextFloat(1.07f,1.08f), z, false))
-                    mc.thePlayer.sendQueue.addToSendQueue(C04PacketPlayerPosition(x, y + 0.0125 * RandomUtils.nextFloat(1.07f,1.08f), z, false))
-                    ClientUtils.displayChatMessage("[Debug]:do Critical")
-                    mc.thePlayer.onCriticalHit(entity)
+                    if( entity.hurtResistantTime <= hurtTimeValue.get() && lastStep.delay(20f)  && (timer.delay(200f) || entity.hurtResistantTime > 0) && mc.thePlayer.isCollidedVertically) {
+                        if(groundTicks > 1) {
+                            mc.thePlayer.sendQueue.addToSendQueue(C04PacketPlayerPosition(x, y + 0.052 * RandomUtils.nextFloat(1.07f, 1.08f), z, false))
+                            mc.thePlayer.sendQueue.addToSendQueue(C04PacketPlayerPosition(x, y + 0.0125 * RandomUtils.nextFloat(1.07f, 1.08f), z, false))
+                            ClientUtils.displayChatMessage("[Debug]:do Critical")
+                            mc.thePlayer.onCriticalHit(entity)
+                        }
+                    }
                 }
 
                 "hop" -> {
@@ -92,6 +98,18 @@ class Criticals : Module() {
         if (packet is C03PacketPlayer && modeValue.get().equals("NoGround", ignoreCase = true) && nogroundstate) {
             packet.onGround = false
         }
+    }
+    @EventTarget
+    fun onUpdate(event: UpdateEvent){
+        if(isOnGround(0.001)){
+            groundTicks++;
+        }else if(!mc.thePlayer.onGround){
+            groundTicks = 0
+        }
+
+    }
+    fun isOnGround(height: Double): Boolean {
+        return !mc.theWorld.getCollidingBoundingBoxes(mc.thePlayer, mc.thePlayer.entityBoundingBox.offset(0.0, -height, 0.0)).isEmpty()
     }
 
     override val tag: String?
