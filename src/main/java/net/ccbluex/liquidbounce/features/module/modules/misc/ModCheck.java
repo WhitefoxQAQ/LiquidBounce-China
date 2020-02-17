@@ -54,6 +54,7 @@ public class ModCheck extends Module {
     private List onlinemod = new ArrayList();
     private final BoolValue showOnline = new BoolValue("ShowOnline", true);
     private final BoolValue showOffline = new BoolValue("ShowOffline", true);
+    private final BoolValue blockmessage = new BoolValue("BlockWatchdogMessage", true);
     private int counter;
     private boolean isFinished;
     @EventTarget
@@ -118,6 +119,9 @@ public class ModCheck extends Module {
             S02PacketChat s02PacketChat = (S02PacketChat)event.getPacket();
             String e = s02PacketChat.getChatComponent().getUnformattedText();
             if(e.toLowerCase().contains("--------------------")){
+                event.cancelEvent();
+            }
+            if(e.toLowerCase().contains("[WATCHDOG]") && blockmessage.get()){
                 event.cancelEvent();
             }
             if (e.toLowerCase().contains("玩家离线，你不能邀请") || e.toLowerCase().contains("That player is not online!")) {

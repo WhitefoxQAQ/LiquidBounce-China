@@ -135,7 +135,7 @@ public class NoFall extends Module {
         final String mode = modeValue.get();
 
         if(packet instanceof C03PacketPlayer && mode.equalsIgnoreCase("SpoofGround")) {
-        if(mc.thePlayer.fallDistance >= 3) {
+        if(mc.thePlayer.fallDistance >= 3 && !isBlockUnder()) {
             ((C03PacketPlayer) packet).onGround = true;
             mc.thePlayer.fallDistance = 0;
         }
@@ -166,5 +166,16 @@ public class NoFall extends Module {
     @Override
     public String getTag() {
         return modeValue.get();
+    }
+    private boolean isBlockUnder() {
+        if(mc.thePlayer.posY < 0)
+            return false;
+        for(int off = 0; off < (int)mc.thePlayer.posY+2; off += 2){
+            AxisAlignedBB bb = mc.thePlayer.getEntityBoundingBox().offset(0, -off, 0);
+            if(!mc.theWorld.getCollidingBoundingBoxes(mc.thePlayer, bb).isEmpty()){
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -67,12 +67,12 @@ public class AutoL extends Module {
             String message = ((S02PacketChat) packet).getChatComponent().getUnformattedText();
             if (message.contains("被" + mc.thePlayer.getGameProfile().getName() + "击杀。")) {
                 String username = message.replaceAll("被" + mc.thePlayer.getGameProfile().getName() + "击杀。", "");
-                mc.thePlayer.sendChatMessage("/ac [LiquidBounce]" + username + " L" + text + (advalue.get() ? ad + ad2 : ""));
+                mc.thePlayer.sendChatMessage("/ac [LiquidBounce] " + username + " L " + text + (advalue.get() ? ad + ad2 : ""));
                 mc.thePlayer.sendChatMessage("/wdr " + username + " ka speed reach fly velocity ac");
             }
             if (message.contains(" 被击杀，击杀者： " + mc.thePlayer.getGameProfile().getName() + "。")) {
                 String username = message.replaceAll(" 被击杀，击杀者： " + mc.thePlayer.getGameProfile().getName() + "。", "");
-                mc.thePlayer.sendChatMessage("/ac [LiquidBounce]" + username + " L" + text + (advalue.get() ? ad + ad2 : ""));
+                mc.thePlayer.sendChatMessage("/ac [LiquidBounce] " + username + " L " + text + (advalue.get() ? ad + ad2 : ""));
                 mc.thePlayer.sendChatMessage("/wdr " + username + " ka speed reach fly velocity ac");
             }
         }
