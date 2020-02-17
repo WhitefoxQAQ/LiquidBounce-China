@@ -42,11 +42,21 @@ public final class RenderUtils extends MinecraftInstance {
     private static final Map<Integer, Boolean> glCapMap = new HashMap<>();
 
     public static int deltaTime;
+    public static double delta;
 
     public static void drawHorizontalLine(float x, float y, float x1, float thickness, int color) {
         rectangle(x, y, x1, y + thickness, color);
     }
 
+    public static double getAnimationState(double animation, double finalState, double speed) {
+        double add =delta * speed;
+        if (animation < finalState) {
+            if (animation +add >= finalState) return finalState;
+            return animation +=add;
+        }
+        if (animation - add <= finalState) return finalState;
+        return animation -=add;
+    }
 
     public static void drawVerticalLine(float x, float y, float y1, float thickness, int color) {
         rectangle(x, y, x + thickness, y1, color);

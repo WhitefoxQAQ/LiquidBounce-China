@@ -13,6 +13,7 @@ import net.ccbluex.liquidbounce.features.module.Module;
 import net.ccbluex.liquidbounce.features.module.ModuleCategory;
 import net.ccbluex.liquidbounce.features.module.ModuleInfo;
 import net.ccbluex.liquidbounce.ui.client.hud.element.elements.Notification;
+import net.ccbluex.liquidbounce.utils.ClientUtils;
 import net.ccbluex.liquidbounce.utils.EntityUtils;
 import net.ccbluex.liquidbounce.utils.render.ColorUtils;
 import net.ccbluex.liquidbounce.utils.timer.MSTimer;
@@ -38,7 +39,6 @@ import java.util.*;
 public class AntiBot extends Module {
     private static List<EntityPlayer> invalid = new ArrayList<>();
     private static List<EntityPlayer> removed = new ArrayList<>();
-    private final BoolValue hypixel = new BoolValue("Hypixel", true);
     private final BoolValue killer = new BoolValue("HypixelKiller", true);
     private final BoolValue tabValue = new BoolValue("Tab", true);
     private final ListValue tabModeValue = new ListValue("TabMode", new String[]{"Equals", "Contains"}, "Contains");
@@ -265,9 +265,9 @@ public class AntiBot extends Module {
             if (!removed.isEmpty()) {
                 if (lastRemoved.delay(1000)) {
                     if (removed.size() == 1) {
-                        LiquidBounce.hud.addNotification(new Notification(removed.size() + " bot has been removed"));
+                        ClientUtils.displayChatMessage(removed.size() + " bot has been removed");
                     } else {
-                        LiquidBounce.hud.addNotification(new Notification(removed.size() + " bots has been removed"));
+                        ClientUtils.displayChatMessage(removed.size() + " bots has been removed");
                     }
                     lastRemoved.reset();
                     removed.clear();

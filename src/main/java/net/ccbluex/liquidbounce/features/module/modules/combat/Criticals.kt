@@ -13,20 +13,22 @@ import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
 import net.ccbluex.liquidbounce.features.module.modules.movement.Fly
-import net.ccbluex.liquidbounce.features.module.modules.movement.LongJump
-import net.ccbluex.liquidbounce.features.module.modules.movement.Speed
+import net.ccbluex.liquidbounce.utils.ClientUtils
+import net.ccbluex.liquidbounce.utils.Logger
 import net.ccbluex.liquidbounce.utils.timer.MSTimer
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.network.play.client.C03PacketPlayer
 import net.minecraft.network.play.client.C03PacketPlayer.C04PacketPlayerPosition
+import org.apache.commons.lang3.RandomUtils
+import kotlin.random.Random
 
 @ModuleInfo(name = "Criticals", description = "Automatically deals critical hits.", category = ModuleCategory.COMBAT)
 class Criticals : Module() {
     val modeValue = ListValue("Mode", arrayOf("Packet", "HypixelPacket", "NoGround", "Hop", "TPHop", "Jump", "LowJump"), "packet")
     val delayValue = IntegerValue("Delay", 0, 0, 1000)
-    private val hurtTimeValue = IntegerValue("HurtTime", 10, 0, 10)
+    private val hurtTimeValue = IntegerValue("HurtTime", 10, 0, 20)
 
     val msTimer = MSTimer()
     var nogroundstate = false
@@ -40,7 +42,7 @@ class Criticals : Module() {
         if (event.targetEntity is EntityLivingBase) {
             val entity = event.targetEntity
             if (!mc.thePlayer.onGround || mc.thePlayer.isOnLadder || mc.thePlayer.isInWeb || mc.thePlayer.isInWater ||
-                    mc.thePlayer.isInLava || mc.thePlayer.ridingEntity != null || entity.hurtTime > hurtTimeValue.get() ||
+                    mc.thePlayer.isInLava || mc.thePlayer.ridingEntity != null || entity.hurtResistantTime >= hurtTimeValue.get() ||
                     LiquidBounce.moduleManager[Fly::class.java]!!.state || !msTimer.hasTimePassed(delayValue.get().toLong()))
                 return
 
@@ -58,10 +60,10 @@ class Criticals : Module() {
                 }
 
                 "hypixelpacket" -> {
-                    mc.thePlayer.sendQueue.addToSendQueue(C04PacketPlayerPosition(x, y + 0.0226, z, false))
-                    mc.thePlayer.sendQueue.addToSendQueue(C04PacketPlayerPosition(x, y, z, false))
+                    mc.thePlayer.sendQueue.addToSendQueue(C04PacketPlayerPosition(x, y + 0.052 * RandomUtils.nextFloat(1.07f,1.08f), z, false))
+                    mc.thePlayer.sendQueue.addToSendQueue(C04PacketPlayerPosition(x, y + 0.0125 * RandomUtils.nextFloat(1.07f,1.08f), z, false))
+                    ClientUtils.displayChatMessage("[Debug]:do Critical")
                     mc.thePlayer.onCriticalHit(entity)
-                    println("crit")
                 }
 
                 "hop" -> {

@@ -1,7 +1,6 @@
 package net.ccbluex.liquidbounce.features.module.modules.render;
 
 import net.ccbluex.liquidbounce.LiquidBounce;
-import net.ccbluex.liquidbounce.event.AttackEvent;
 import net.ccbluex.liquidbounce.event.EventTarget;
 import net.ccbluex.liquidbounce.event.Render2DEvent;
 import net.ccbluex.liquidbounce.features.module.Module;
@@ -10,28 +9,19 @@ import net.ccbluex.liquidbounce.features.module.ModuleInfo;
 import net.ccbluex.liquidbounce.features.module.modules.combat.KillAura;
 import net.ccbluex.liquidbounce.utils.Colors;
 import net.ccbluex.liquidbounce.utils.render.RenderUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiPlayerTabOverlay;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.gui.inventory.GuiInventory;
-import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EnumPlayerModelParts;
 
 import java.awt.*;
 import java.text.NumberFormat;
-import java.util.Iterator;
-import java.util.List;
-
-import static net.ccbluex.liquidbounce.utils.Logger.mc;
 
 @ModuleInfo(name = "TargetHUD", description = "undefiend.", category = ModuleCategory.RENDER)
 public class TargetHUD extends Module {
+    private double healthanimation = 100.0D;
     KillAura killAura = (KillAura) LiquidBounce.moduleManager.getModule(KillAura.class);
+
     @EventTarget
     public void onRender2D(Render2DEvent e){
         Entity entity = killAura.getTarget();
@@ -56,7 +46,9 @@ public class TargetHUD extends Module {
                 }
 
                 double healthLocation = width1 * (double)progress;
-                RenderUtils.rectangle(37.5D, 11.5D, 38.0D + healthLocation + 0.5D, 14.5D, customColor.getRGB());
+                healthanimation = RenderUtils.getAnimationState(this.healthanimation,healthLocation , 200);
+
+                RenderUtils.rectangle(37.5D, 11.5D, 38.0D + healthanimation + 0.5D, 14.5D, customColor.getRGB());
                 RenderUtils.drawRectBordered(37.0D, 11.0D, 39.0D + width1, 15.0D, 0.5D, Colors.getColor(0, 0), Colors.getColor(0));
 
                 for(int i = 1; i < 10; ++i) {

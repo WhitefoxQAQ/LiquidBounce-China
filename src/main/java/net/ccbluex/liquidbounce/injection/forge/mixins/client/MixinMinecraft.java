@@ -124,14 +124,17 @@ public abstract class MixinMinecraft {
     }
 
     private long lastFrame = getTime();
-
+    long lastframe1;
     @Inject(method = "runGameLoop", at = @At("HEAD"))
     private void runGameLoop(final CallbackInfo callbackInfo) {
         final long currentTime = getTime();
         final int deltaTime = (int) (currentTime - lastFrame);
         lastFrame = currentTime;
-
         RenderUtils.deltaTime = deltaTime;
+
+        long thisFrame = System.currentTimeMillis();
+        RenderUtils.delta = (float) (thisFrame - this.lastframe1) / 1000.0F;
+        this.lastframe1 = thisFrame;
     }
 
     public long getTime() {

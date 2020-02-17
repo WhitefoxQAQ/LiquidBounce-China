@@ -17,7 +17,7 @@ public class FontManager {
         try {
             InputStream inputStream = new FileInputStream(new File(LiquidBounce.fileManager.fontsDir, "yahei.ttf"));
 
-            Font font = null;
+            Font font;
             font = Font.createFont(Font.TRUETYPE_FONT, inputStream);
 
             Logger.printconsolemessage("Loading Fonts......");

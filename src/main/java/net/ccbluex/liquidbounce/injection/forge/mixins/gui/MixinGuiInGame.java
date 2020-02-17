@@ -30,9 +30,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 @Mixin(GuiIngame.class)
 @SideOnly(Side.CLIENT)
@@ -51,28 +49,25 @@ public abstract class MixinGuiInGame {
     private void renderTooltip(ScaledResolution sr, float partialTicks, CallbackInfo callbackInfo) {
         final HUD hud = (HUD) LiquidBounce.moduleManager.getModule(HUD.class);
 
-        if(Minecraft.getMinecraft().getRenderViewEntity() instanceof EntityPlayer && hud.getState() && hud.blackHotbarValue.get()) {
+        if (Minecraft.getMinecraft().getRenderViewEntity() instanceof EntityPlayer && hud.getState() && hud.blackHotbarValue.get()) {
             EntityPlayer entityPlayer = (EntityPlayer) Minecraft.getMinecraft().getRenderViewEntity();
-            SimpleDateFormat sdf =new SimpleDateFormat("yyyy年MM月dd日  HH:mm:ss" );
-            Date d= new Date();
-            String str = sdf.format(d);
+
+
             int width = sr.getScaledWidth();
-            DecimalFormat df = new DecimalFormat(".0");
+
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            GuiIngame.drawRect(0, sr.getScaledHeight() - 24, width, sr.getScaledHeight(), new Color(0, 0, 0,80).getRGB());
+            GuiIngame.drawRect(0, sr.getScaledHeight() - 24, width, sr.getScaledHeight(), new Color(0, 0, 0, 80).getRGB());
             GuiIngame.drawRect(0, sr.getScaledHeight() - 24, 3, sr.getScaledHeight(), new Color(0, 255, 217, 255).getRGB());
-            FontManager.yahei20.drawStringWithShadow("X:"+df.format(Minecraft.getMinecraft().thePlayer.posX)+" Y:"+df.format(Minecraft.getMinecraft().thePlayer.posY)+" Z:"+df.format(Minecraft.getMinecraft().thePlayer.posZ),5,sr.getScaledHeight() - 24,new Color(255,255,255).getRGB());
-            Gui.drawRect(0,0,0,0,Color.black.getRGB());
-            FontManager.yahei20.drawStringWithShadow(""+str,5,sr.getScaledHeight() - 12,Color.white.getRGB());
-            Gui.drawRect(0,0,0,0,Color.black.getRGB());
-            GuiIngame.drawRect(width/2 - 91 - 1 + entityPlayer.inventory.currentItem * 20 + 1, sr.getScaledHeight() - 24, width/2 - 91 - 1 + entityPlayer.inventory.currentItem * 20 + 22, sr.getScaledHeight() - 22 - 1 + 24, Integer.MAX_VALUE);
+            GuiIngame.drawRect(width / 2 - 91 - 1 + entityPlayer.inventory.currentItem * 20 + 1, sr.getScaledHeight() - 24, width / 2 - 91 - 1 + entityPlayer.inventory.currentItem * 20 + 22, sr.getScaledHeight() - 22 - 1 + 24, Integer.MAX_VALUE);
+
+
 
             GlStateManager.enableRescaleNormal();
             GlStateManager.enableBlend();
             GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
             RenderHelper.enableGUIStandardItemLighting();
 
-            for(int j = 0; j < 9; ++j) {
+            for (int j = 0; j < 9; ++j) {
                 int k = sr.getScaledWidth() / 2 - 90 + j * 20 + 2;
                 int l = sr.getScaledHeight() - 16 - 3;
                 this.renderHotbarItem(j, k, l, partialTicks, entityPlayer);
@@ -89,7 +84,7 @@ public abstract class MixinGuiInGame {
 
     @Inject(method = "renderTooltip", at = @At("RETURN"))
     private void renderTooltipPost(ScaledResolution sr, float partialTicks, CallbackInfo callbackInfo) {
-        if(!ClassUtils.hasClass("net.labymod.api.LabyModAPI"))
+        if (!ClassUtils.hasClass("net.labymod.api.LabyModAPI"))
             LiquidBounce.eventManager.callEvent(new Render2DEvent(partialTicks));
     }
 
@@ -97,7 +92,7 @@ public abstract class MixinGuiInGame {
     private void renderPumpkinOverlay(final CallbackInfo callbackInfo) {
         final AntiBlind antiBlind = (AntiBlind) LiquidBounce.moduleManager.getModule(AntiBlind.class);
 
-        if(antiBlind.getState() && antiBlind.getPumpkinEffect().get())
+        if (antiBlind.getState() && antiBlind.getPumpkinEffect().get())
             callbackInfo.cancel();
     }
 }
