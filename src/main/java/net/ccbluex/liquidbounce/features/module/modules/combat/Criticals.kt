@@ -14,12 +14,13 @@ import net.ccbluex.liquidbounce.features.module.Module
 import net.ccbluex.liquidbounce.features.module.ModuleCategory
 import net.ccbluex.liquidbounce.features.module.ModuleInfo
 import net.ccbluex.liquidbounce.features.module.modules.movement.Fly
-import net.ccbluex.liquidbounce.utils.ClientUtils
+import net.ccbluex.liquidbounce.features.module.modules.movement.Speed
 import net.ccbluex.liquidbounce.utils.Logger
 import net.ccbluex.liquidbounce.utils.timer.MSTimer
 import net.ccbluex.liquidbounce.value.IntegerValue
 import net.ccbluex.liquidbounce.value.ListValue
 import net.minecraft.entity.EntityLivingBase
+import net.minecraft.network.play.client.C02PacketUseEntity
 import net.minecraft.network.play.client.C03PacketPlayer
 import net.minecraft.network.play.client.C03PacketPlayer.C04PacketPlayerPosition
 import org.apache.commons.lang3.RandomUtils
@@ -36,8 +37,6 @@ class Criticals : Module() {
     val msTimer = MSTimer()
     var nogroundstate = false
     override fun onEnable() {
-        if (modeValue.get().equals("NoGround", ignoreCase = true))
-            mc.thePlayer.jump()
     }
 
     @EventTarget
@@ -65,9 +64,9 @@ class Criticals : Module() {
                 "hypixelpacket" -> {
                     if( entity.hurtResistantTime <= hurtTimeValue.get() && lastStep.delay(20f)  && (timer.delay(200f) || entity.hurtResistantTime > 0) && mc.thePlayer.isCollidedVertically) {
                         if(groundTicks > 1) {
-                            mc.netHandler.addToSendQueue(C04PacketPlayerPosition(x, y + 0.052 * RandomUtils.nextFloat(1.07f, 1.08f), z, false))
-                            mc.netHandler.addToSendQueue(C04PacketPlayerPosition(x, y + 0.0125 * RandomUtils.nextFloat(1.01f, 1.08f), z, false))
-                            Logger.printinfo("§7[Debug]:do Critical")
+                            mc.netHandler.addToSendQueue(C04PacketPlayerPosition(x, y, z, false))
+                            mc.netHandler.addToSendQueue(C04PacketPlayerPosition(x, y + RandomUtils.nextFloat(0.01f,0.06f), z, false))
+                            mc.netHandler.addToSendQueue(C04PacketPlayerPosition(x, y, z, false))
                             mc.thePlayer.onCriticalHit(entity)
                         }
                     }
@@ -95,9 +94,12 @@ class Criticals : Module() {
     @EventTarget
     fun onPacket(event: PacketEvent) {
         val packet = event.packet
-
+        if(packet is C02PacketUseEntity && canCrit() && LiquidBounce.moduleManager[Speed::class.java]!!.state ){
+            nogroundstate = true
+        }
         if (packet is C03PacketPlayer && modeValue.get().equals("NoGround", ignoreCase = true) && nogroundstate) {
             packet.onGround = false
+            nogroundstate = false;
         }
     }
     @EventTarget
@@ -112,7 +114,9 @@ class Criticals : Module() {
     fun isOnGround(height: Double): Boolean {
         return !mc.theWorld.getCollidingBoundingBoxes(mc.thePlayer, mc.thePlayer.entityBoundingBox.offset(0.0, -height, 0.0)).isEmpty()
     }
-
+    private fun canCrit(): Boolean {
+        return mc.thePlayer.onGround && !mc.thePlayer.isInWater
+    }
     override val tag: String?
         get() = modeValue.get()
 }

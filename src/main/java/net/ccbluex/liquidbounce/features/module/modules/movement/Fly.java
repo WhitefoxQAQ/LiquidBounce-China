@@ -208,9 +208,9 @@ public class Fly extends Module {
             case "boosthypixel":
                 if(!mc.thePlayer.onGround) break;
 
-                for (int i = 0; i < 3; i++) //Imagine flagging to NCP.
-                    mc.getNetHandler().addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, true));
-                
+                for (int i = 0; i < 2; i++) //Imagine flagging to NCP.
+                mc.getNetHandler().addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, true));
+
                 double fallDistance = 3.0125; //add 0.0125 to ensure we get the fall dmg
                 while (fallDistance > 0) {
                     mc.getNetHandler().addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.0624986421, mc.thePlayer.posZ, false));
@@ -220,7 +220,7 @@ public class Fly extends Module {
                     fallDistance -= 0.0624986421;
                 }
                 mc.getNetHandler().addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, true));
-                
+
                 mc.thePlayer.jump();
                 mc.thePlayer.posY += 0.42F; // Visual
                 boostHypixelState = 1;

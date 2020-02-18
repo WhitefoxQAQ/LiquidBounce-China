@@ -37,10 +37,7 @@ public class CNHypixelSpeed extends SpeedMode {
         double baseSpeed = 0.2873D;
         if (Minecraft.getMinecraft().thePlayer.isPotionActive(Potion.moveSpeed)) {
             int amplifier = Minecraft.getMinecraft().thePlayer.getActivePotionEffect(Potion.moveSpeed).getAmplifier();
-            //  if(((Options) settings.get(MODE).getValue()).getSelected().equalsIgnoreCase("Hypixel")){
-            // 	baseSpeed *= (1.0D + 0.225D * (amplifier + 1));
-            // }else
-            baseSpeed *= (1.0D + 0.2D * (amplifier + 1));
+            baseSpeed *= (1.0D + 0.192D * (amplifier + 1));
         }
         return baseSpeed;
     }
@@ -176,10 +173,10 @@ public class CNHypixelSpeed extends SpeedMode {
 
         if (stage == 0) {
             //JUMP
-            if (timer.delay(300)) {
+            if (timer.hasTimePassed(300)) {
                 timer.reset();
             }
-            if (!lastCheck.delay(500)) {
+            if (!lastCheck.hasTimePassed(500)) {
                 if (!shouldslow)
                     shouldslow = true;
             } else {
@@ -189,15 +186,13 @@ public class CNHypixelSpeed extends SpeedMode {
             value = 0.64 + (getSpeedEffect() + (0.028 * getSpeedEffect())) * 0.134;
 
         } else if (stage == 1) {
-            if (mc.timer.timerSpeed == 1) {
-            }
+            mc.timer.timerSpeed = 0.7f;
             value = firstvalue;
         } else if (stage >= 2) {
-            if (mc.timer.timerSpeed == 1) {
-            }
+            mc.timer.timerSpeed = 0.7f;
             value = firstvalue - decr;
         }
-        if (shouldslow || !lastCheck.delay(500) || collided) {
+        if (shouldslow || !lastCheck.hasTimePassed(500) || collided) {
             value = 0.2;
             if (stage == 0)
                 value = 0;

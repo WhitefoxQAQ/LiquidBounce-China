@@ -25,11 +25,6 @@ public final class MSTimer {
         time = System.currentTimeMillis();
     }
 
-
-
-
-
-
     public boolean delay(float milliSec) {
         return (float) (getTime() - this.prevMS) >= milliSec;
     }
