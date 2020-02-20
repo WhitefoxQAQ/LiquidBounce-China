@@ -160,7 +160,14 @@ public class Scaffold extends Module {
     @EventTarget
     public void onUpdate(final UpdateEvent event) {
         mc.timer.timerSpeed = timerValue.get();
+        if(tower.get()&&Keyboard.isKeyDown(Keyboard.KEY_SPACE) && !LiquidBounce.moduleManager.getModule(Speed.class).getState()){
+            mc.thePlayer.onGround = false;
+            LiquidBounce.moduleManager.getModule(Tower.class).setState(true);
+            //System.out.println("1");
+        }else{
+            LiquidBounce.moduleManager.getModule(Tower.class).setState(false);
 
+        }
         if(mc.thePlayer.onGround) {
             final String mode = modeValue.get();
 
@@ -227,13 +234,7 @@ public class Scaffold extends Module {
                 zitterDirection = !zitterDirection;
             }
         }
-        if(tower.get()&&Keyboard.isKeyDown(Keyboard.KEY_SPACE) && !LiquidBounce.moduleManager.getModule(Speed.class).getState()){
-            LiquidBounce.moduleManager.getModule(Tower.class).setState(true);
-            //System.out.println("1");
-        }else{
-            LiquidBounce.moduleManager.getModule(Tower.class).setState(false);
 
-        }
     }
 
     @EventTarget

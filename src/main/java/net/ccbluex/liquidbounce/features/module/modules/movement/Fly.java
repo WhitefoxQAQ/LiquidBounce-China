@@ -20,6 +20,7 @@ import net.ccbluex.liquidbounce.value.FloatValue;
 import net.ccbluex.liquidbounce.value.IntegerValue;
 import net.ccbluex.liquidbounce.value.ListValue;
 import net.minecraft.block.BlockAir;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C00PacketKeepAlive;
 import net.minecraft.network.play.client.C03PacketPlayer;
@@ -208,16 +209,12 @@ public class Fly extends Module {
             case "boosthypixel":
                 if(!mc.thePlayer.onGround) break;
 
-                for (int i = 0; i < 2; i++) //Imagine flagging to NCP.
                 mc.getNetHandler().addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, true));
 
-                double fallDistance = 3.0125; //add 0.0125 to ensure we get the fall dmg
-                while (fallDistance > 0) {
-                    mc.getNetHandler().addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.0624986421, mc.thePlayer.posZ, false));
-                    mc.getNetHandler().addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.0625      , mc.thePlayer.posZ, false));
-                    mc.getNetHandler().addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.0624986421, mc.thePlayer.posZ, false));
-                    mc.getNetHandler().addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.0000013579, mc.thePlayer.posZ, false));
-                    fallDistance -= 0.0624986421;
+                for (int index = 0; index <= 67; ++index) {
+                    mc.getNetHandler().addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 2.535E-9, mc.thePlayer.posZ, false));
+                    mc.getNetHandler().addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 1.05E-10, mc.thePlayer.posZ, false));
+                    mc.getNetHandler().addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY + 0.0448865, mc.thePlayer.posZ, false));
                 }
                 mc.getNetHandler().addToSendQueue(new C03PacketPlayer.C04PacketPlayerPosition(mc.thePlayer.posX, mc.thePlayer.posY, mc.thePlayer.posZ, true));
 

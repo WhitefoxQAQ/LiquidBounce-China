@@ -78,10 +78,8 @@ public class ModCheck extends Module {
         if (onlinemod.isEmpty()) {
             Long += 10;
         }
-        RenderUtils.drawRoundedRect(5, 100, 120, 111, new Color(0, 125, 255, 255).getRGB(),
-                new Color(0, 125, 255, 255).getRGB());
-        RenderUtils.drawRoundedRect(5, 110, 120, 110 + Long, new Color(255, 255, 255, 155).getRGB(),
-                new Color(255, 255, 255, 155).getRGB());
+        RenderUtils.rectangle(5, 100, 120, 111, new Color(0, 125, 255, 255).getRGB());
+        RenderUtils.rectangle(5, 110, 120, 110 + Long, new Color(255, 255, 255, 155).getRGB());
         Long = 0;
         if (showOnline.get())
             for (String mods : listArray) {

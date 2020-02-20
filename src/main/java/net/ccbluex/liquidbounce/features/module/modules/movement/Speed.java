@@ -106,7 +106,7 @@ public class Speed extends Module {
     public final BoolValue customStrafeValue = new BoolValue("CustomStrafe", true);
     public final BoolValue resetXZValue = new BoolValue("CustomResetXZ", false);
     public final BoolValue resetYValue = new BoolValue("CustomResetY", false);
-    public final BoolValue lagback = new BoolValue("LagBackCheck", true);
+    public static final BoolValue lagback = new BoolValue("LagBackCheck", true);
     public final FloatValue portMax = new FloatValue("AAC-PortLength", 1, 1, 20);
     public final FloatValue aacGroundTimerValue = new FloatValue("AACGround-Timer", 3F, 1.1F, 10F);
     public final FloatValue cubecraftPortLengthValue = new FloatValue("CubeCraft-PortLength", 1F, 0.1F, 2F);
@@ -164,11 +164,21 @@ public class Speed extends Module {
     @EventTarget
     public void onPacket(final PacketEvent event){
         final Packet<?> packet = event.getPacket();
-        if(packet instanceof S08PacketPlayerPosLook){
-            if(lagback.get()){
-                ClientUtils.displayChatMessage("§8[§c§lLagBackCheck§8] §cSetback detected.");
+        if(packet instanceof  S08PacketPlayerPosLook){
+            S08PacketPlayerPosLook pac = (S08PacketPlayerPosLook) event.getPacket();
+            if (lagback.get()) {
+                mc.thePlayer.onGround = false;
+                mc.thePlayer.motionX *= 0;
+                mc.thePlayer.motionZ *= 0;
+                mc.thePlayer.jumpMovementFactor = 0;
+                mc.timer.timerSpeed = 1;
                 this.toggle();
+            } else if (CNHypixelSpeed.lastCheck.delay(300)) {
+                pac.yaw = mc.thePlayer.rotationYaw;
+                pac.pitch = mc.thePlayer.rotationPitch;
             }
+            CNHypixelSpeed.stage = -4;
+            CNHypixelSpeed.lastCheck.reset();
         }
     }
 

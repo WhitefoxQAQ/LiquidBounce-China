@@ -15,8 +15,8 @@ import net.minecraft.util.MathHelper;
 
 public class CNHypixelSpeed extends SpeedMode {
     public static int stage;
+    public static MSTimer lastCheck = new MSTimer();
     private final MSTimer timer = new MSTimer();
-    private final MSTimer lastCheck = new MSTimer();
     public boolean shouldslow = false;
     boolean collided = false, lessSlow;
     double less, stair;
@@ -37,7 +37,7 @@ public class CNHypixelSpeed extends SpeedMode {
         double baseSpeed = 0.2873D;
         if (Minecraft.getMinecraft().thePlayer.isPotionActive(Potion.moveSpeed)) {
             int amplifier = Minecraft.getMinecraft().thePlayer.getActivePotionEffect(Potion.moveSpeed).getAmplifier();
-            baseSpeed *= (1.0D + 0.192D * (amplifier + 1));
+            baseSpeed *= (1.0D + 0.2D * (amplifier + 1));
         }
         return baseSpeed;
     }
@@ -54,11 +54,7 @@ public class CNHypixelSpeed extends SpeedMode {
     }
 
     public static boolean isOnGround(double height) {
-        if (!mc.theWorld.getCollidingBoundingBoxes(mc.thePlayer, mc.thePlayer.getEntityBoundingBox().offset(0.0D, -height, 0.0D)).isEmpty()) {
-            return true;
-        } else {
-            return false;
-        }
+        return !mc.theWorld.getCollidingBoundingBoxes(mc.thePlayer, mc.thePlayer.getEntityBoundingBox().offset(0.0D, -height, 0.0D)).isEmpty();
     }
 
     public static boolean isInLiquid() {
@@ -82,7 +78,7 @@ public class CNHypixelSpeed extends SpeedMode {
     @Override
     public void onEnable() {
         boolean player = mc.thePlayer == null;
-        collided = player ? false : mc.thePlayer.isCollidedHorizontally;
+        collided = !player && mc.thePlayer.isCollidedHorizontally;
         lessSlow = false;
         less = 0;
         stage = 2;
@@ -130,23 +126,18 @@ public class CNHypixelSpeed extends SpeedMode {
                     mc.thePlayer.jump();
                     event.setY(mc.thePlayer.motionY = motY);
                     //  ChatUtil.printChat("PosY:"+motY);
-                } else {
-
                 }
 
                 less++;
-                if (less > 1 && !lessSlow)
-                    lessSlow = true;
-                else
-                    lessSlow = false;
+                lessSlow = less > 1 && !lessSlow;
                 if (less > 1.12)
                     less = 1.12;
             }
         }
-        speed = getHypixelSpeed(stage) + 0.01 + Math.random() / 510;
-        speed *= 0.865;
+        speed = getHypixelSpeed(stage) + 0.01 + Math.random() / 500;
+        speed *= 0.87;
         if (stair > 0) {
-            speed *= 0.7 - getSpeedEffect() * 0.11;
+            speed *= 0.7 - getSpeedEffect() * 0.1;
         }
 
         if (stage < 0)
@@ -166,40 +157,35 @@ public class CNHypixelSpeed extends SpeedMode {
     }
 
     private double getHypixelSpeed(int stage) {
-        double value = defaultSpeed() + (0.028 * getSpeedEffect()) + (double) getSpeedEffect() / 16;
-        double firstvalue = 0.4145 + (double) getSpeedEffect() / 13;
-        double decr = (((double) stage / 500) * 2);
-
-
+        double value = defaultSpeed() + 0.028 * (double) getSpeedEffect() + (double) getSpeedEffect() / 15.0;
+        double firstvalue = 0.4145 + (double) getSpeedEffect() / 12.5;
+        double decr = (double) stage / 500.0 * 2.0;
         if (stage == 0) {
-            //JUMP
-            if (timer.hasTimePassed(300)) {
-                timer.reset();
+            if (this.timer.delay(300.0f)) {
+                this.timer.reset();
             }
-            if (!lastCheck.hasTimePassed(500)) {
-                if (!shouldslow)
-                    shouldslow = true;
-            } else {
-                if (shouldslow)
-                    shouldslow = false;
+            if (!lastCheck.delay(500.0f)) {
+                if (!this.shouldslow) {
+                    this.shouldslow = true;
+                }
+            } else if (this.shouldslow) {
+                this.shouldslow = false;
             }
-            value = 0.64 + (getSpeedEffect() + (0.028 * getSpeedEffect())) * 0.134;
-
+            value = 0.64 + ((double) getSpeedEffect() + 0.028 * (double) getSpeedEffect()) * 0.134;
         } else if (stage == 1) {
-            mc.timer.timerSpeed = 0.7f;
+            // empty if block
             value = firstvalue;
         } else if (stage >= 2) {
-            mc.timer.timerSpeed = 0.7f;
+            // empty if block
             value = firstvalue - decr;
         }
-        if (shouldslow || !lastCheck.hasTimePassed(500) || collided) {
+        if (this.shouldslow || !lastCheck.delay(500.0f) || this.collided) {
             value = 0.2;
-            if (stage == 0)
-                value = 0;
+            if (stage == 0) {
+                value = 0.0;
+            }
         }
-
-
-        return Math.max(value, shouldslow ? value : defaultSpeed() + (0.028 * getSpeedEffect()));
+        return Math.max(value, this.shouldslow ? value : defaultSpeed() + 0.028 * (double) getSpeedEffect());
     }
 
     private void setMotion(MoveEvent em, double speed) {

@@ -22,6 +22,7 @@ public class PacketMotior extends Module {
     public void onPacket(PacketEvent e){
         if (e.getPacket() instanceof C03PacketPlayer){
             ++packetcounter;
+
         }
     }
 
@@ -37,4 +38,9 @@ public class PacketMotior extends Module {
         }
     }
 
+    @Nullable
+    @Override
+    public String getTag() {
+        return packetcounter+"";
+    }
 }
