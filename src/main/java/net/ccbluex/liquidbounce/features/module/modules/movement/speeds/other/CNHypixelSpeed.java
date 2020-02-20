@@ -173,10 +173,8 @@ public class CNHypixelSpeed extends SpeedMode {
             }
             value = 0.64 + ((double) getSpeedEffect() + 0.028 * (double) getSpeedEffect()) * 0.134;
         } else if (stage == 1) {
-            // empty if block
             value = firstvalue;
         } else if (stage >= 2) {
-            // empty if block
             value = firstvalue - decr;
         }
         if (this.shouldslow || !lastCheck.delay(500.0f) || this.collided) {
